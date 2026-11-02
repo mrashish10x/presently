@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  classes  SchoolClass[]
+  subjects Subject[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash   String
+  emailVerifiedAt DateTime?
+  role         String
+  status       String   @default("active")
+  phone        String?
+  avatarColor  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  student       Student?
+  teacher       Teacher?
+  notifications Notification[]
+  activities    Activity[]
+
+  @@index([schoolId])
+}
+
+model Student {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  rollNo       String
+  guardianName String?
+  joinedOn     DateTime @default(now())
+  classId      String
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolClass SchoolClass @relation(fields: [classId], references: [id])
+  attendance  Attendance[]
+
+  @@unique([classId, rollNo])
+  @@index([classId])
+}
+
+model Teacher {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  joinedOn        DateTime @default(now())
+  assignedClassId String?
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedClass   SchoolClass?  @relation("AssignedTeacher", fields: [assignedClassId], references: [id])
+  subjects        Subject[]
+  classTeacherFor SchoolClass[] @relation("ClassTeacher")
+  attendance      Attendance[]
+
+  @@index([assignedClassId])
+}
+
+model SchoolClass {
+  id             String  @id @default(cuid())
+  name           String
+  section        String
+  classTeacherId String?
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  students         Student[]
+  classTeacher     Teacher?  @relation("ClassTeacher", fields: [classTeacherId], references: [id], onDelete: SetNull)
+  assignedTeachers Teacher[] @relation("AssignedTeacher")
+  subjects         Subject[]
+
+  @@unique([schoolId, name, section])
+  @@index([schoolId])
+}
+
+model Subject {
+  id        String  @id @default(cuid())
+  name      String
+  code      String
+  teacherId String?
+  classId   String?
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  teacher     Teacher?     @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  schoolClass SchoolClass? @relation(fields: [classId], references: [id], onDelete: SetNull)
+  attendance  Attendance[]
+
+  @@unique([schoolId, code])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([teacherId])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  date      DateTime
+  status    String
+  studentId String
+  subjectId String
+  teacherId String?
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id])
+  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+
+  @@unique([studentId, subjectId, date])
+  @@index([date])
+  @@index([studentId])
+  @@index([subjectId])
+  @@index([teacherId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String
+  type        String   @default("info")
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String
+  target    String
+  createdAt DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId])
+}
+
+model EmailVerification {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  otpHash      String
+  passwordHash String
+  schoolName   String
+  adminName    String
+  phone        String?
+  expiresAt    DateTime
+  attempts     Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+model AccountEmailOtp {
+  id        String   @id @default(cuid())
+  email     String
+  otpHash   String
+  purpose   String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([email, purpose])
+  @@index([expiresAt])
+}

@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F7F5EF;
+  --foreground: #1C2320;
+
+  /* Brand */
+  --color-ink: #14231F;
+  --color-ink-soft: #26332F;
+  --color-teal-950: #0B1E1A;
+  --color-teal-900: #123C33;
+  --color-teal-800: #16513F;
+  --color-teal-700: #1B6B4E;
+  --color-teal-600: #1F8460;
+  --color-teal-500: #2C9C6F;
+  --color-teal-100: #DCEEE3;
+  --color-teal-50: #EFF6F1;
+
+  --color-gold-600: #B77A2C;
+  --color-gold-500: #D2953D;
+  --color-gold-400: #E3AE5F;
+  --color-gold-100: #F8E9D2;
+
+  --color-clay-600: #B34A3A;
+  --color-clay-500: #C85B45;
+  --color-clay-100: #F6DFD9;
+
+  --color-sand-50: #F7F5EF;
+  --color-sand-100: #F0ECE1;
+  --color-sand-200: #E4DFD0;
+
+  --color-line: #E2DED2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-teal-950: var(--color-teal-950);
+  --color-teal-900: var(--color-teal-900);
+  --color-teal-800: var(--color-teal-800);
+  --color-teal-700: var(--color-teal-700);
+  --color-teal-600: var(--color-teal-600);
+  --color-teal-500: var(--color-teal-500);
+  --color-teal-100: var(--color-teal-100);
+  --color-teal-50: var(--color-teal-50);
+
+  --color-gold-600: var(--color-gold-600);
+  --color-gold-500: var(--color-gold-500);
+  --color-gold-400: var(--color-gold-400);
+  --color-gold-100: var(--color-gold-100);
+
+  --color-clay-600: var(--color-clay-600);
+  --color-clay-500: var(--color-clay-500);
+  --color-clay-100: var(--color-clay-100);
+
+  --color-sand-50: var(--color-sand-50);
+  --color-sand-100: var(--color-sand-100);
+  --color-sand-200: var(--color-sand-200);
+
+  --color-line: var(--color-line);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-teal-600);
+  color: white;
+}
+
+.font-display {
+  font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* thin scrollbar for dashboard chrome */
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--color-sand-200);
+  border-radius: 999px;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-toast-in {
+  animation: toast-in 0.25s ease-out both;
+}
